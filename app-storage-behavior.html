@@ -386,7 +386,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        *   or `undefined` if called while initializing.
        */
       _initializeStoredValue: function() {
-        if (this.__initializingStoredValue) {
+         if (this.__initializingStoredValue) {
+          if (!this.__willReenter) {
+            this.__willReenter = true;
+            this.__initializingStoredValue.then(function(){
+              this.__willReenter = false;
+              this._initializeStoredValue();
+            }.bind(this));
+          }
           return;
         }
 
